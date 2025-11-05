@@ -79,7 +79,24 @@
     .settings-title { font-size:16px; margin-bottom:15px; color: rgba(255,255,255,0.9); font-weight:600; }
     .settings-group { margin-bottom:12px; }
     .settings-label { font-size:13px; color: rgba(255,255,255,0.8); margin-bottom:8px; display:block; }
-    .settings-input, .settings-select, .settings-range { background: rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.12); border-radius:8px; color:white; padding:8px; font-size:13px; width:100%; }
+
+    /* === ƏVƏZ EDİLMİŞ HISSƏ === */
+    .settings-input, .settings-select, .settings-range {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      color: white;
+      padding: 8px;
+      font-size: 13px;
+      width: 100%;
+    }
+    .settings-select option {
+      background: #1a1a1a;
+      color: white;
+      padding: 8px;
+    }
+    /* =========================== */
+
     .custom-colors { display:flex; gap:8px; margin-top:10px; }
     .color-input { flex:1; height:30px; border:none; border-radius:6px; cursor:pointer; }
 
@@ -406,14 +423,6 @@
         currentLineIndex = 0; 
         displayLyrics(); 
         updateFontSettings(); 
-        
-        // Audio yüklüdürsə və zaman etiketləri yoxdursa, avtomatik təyin et
-        if (audioPlayer.duration && lyricsData.length > 0 && lyricsData[0].time === null) { 
-          const duration = audioPlayer.duration; 
-          const interval = duration/lyricsData.length; 
-          lyricsData.forEach((line,i) => line.time = i*interval); 
-          displayLyrics();
-        }
       };
       reader.onerror = function(e) {
         console.error("Fayl oxuma xətası:", e);
