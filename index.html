@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Lyrics Visualizer</title>
+  <title>Mahnı sözləri</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html,body { height: 100%; }
@@ -17,7 +17,7 @@
     .gradient-overlay { position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: #000; background-size: 400% 400%; animation: gradientFlow 15s ease infinite; opacity: 0.8; }
     @keyframes gradientFlow { 0% { transform: rotate(0deg) scale(1.2); background-position: 0% 50%; } 50% { transform: rotate(180deg) scale(1.3); background-position: 100% 50%; } 100% { transform: rotate(360deg) scale(1.2); background-position: 0% 50%; } }
 
-    .image-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; background-repeat: no-repeat; filter: blur(30px) brightness(0.45) saturate(1.4); opacity: 0.9; z-index: -2; transition: all 0.5s ease; }
+    .image-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; background-repeat: no-repeat; filter: blur(30px) brightness(0.82) saturate(0.88); opacity: 0.9; z-index: -2; transition: all 0.5s ease; }
 
     .particles-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; pointer-events: none; }
 
@@ -100,70 +100,161 @@
     .custom-colors { display:flex; gap:8px; margin-top:10px; }
     .color-input { flex:1; height:30px; border:none; border-radius:6px; cursor:pointer; }
 
-    .lyrics-display-container { flex:1; overflow:hidden; position:relative; display:flex; align-items:center; justify-content:center; }
-    .lyrics-wheel { width:100%; max-width:700px; height:100%; display:flex; flex-direction:column; justify-content:center; align-items:center; position:relative; }
-
-    .lyrics-line {
-      font-size:28px;
-      line-height:1.4;
-      margin:8px 0;
-      padding:12px 20px;
-      text-align:center;
-      transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      width:100%;
-      font-weight:400;
-      color: rgba(255,255,255,0.6);
-      position:absolute;
-      left:0;
-      opacity:0;
-      transform: translateY(40px) scale(0.95);
-    }
-
-    .lyrics-line.active {
-      opacity:1;
-      transform: translateY(0) scale(1);
-      color:#fff;
-      font-size:32px;
-      font-weight:600;
-    }
-
-    .lyrics-line.prev {
-      opacity:0.4;
-      transform: translateY(-60px) scale(0.9);
-      color: rgba(255,255,255,0.5);
-    }
-
-    .lyrics-line.next {
-      opacity:0.4;
-      transform: translateY(60px) scale(0.9);
-      color: rgba(255,255,255,0.5);
-    }
-
-    .lyrics-line.far-prev {
-      opacity:0.2;
-      transform: translateY(-120px) scale(0.85);
-      color: rgba(255,255,255,0.3);
-    }
-
-    .lyrics-line.far-next {
-      opacity:0.2;
-      transform: translateY(120px) scale(0.85);
-      color: rgba(255,255,255,0.3);
-    }
-
     .fullscreen-btn { position:absolute; top:20px; left:20px; background: rgba(255,255,255,0.15); border:none; padding:12px; border-radius:8px; color:white; cursor:pointer; font-size:18px; backdrop-filter: blur(15px); border:1px solid rgba(255,255,255,0.2); z-index:2; transition:all 0.3s ease; }
     .fullscreen-btn:hover { background: rgba(255,255,255,0.25); transform:scale(1.1); }
 
-    .fullscreen-mode .file-inputs { opacity:0; pointer-events:none; transform: translateY(-20px); }
-    .fullscreen-mode .image-side, .fullscreen-mode .lyrics-side { padding:60px; }
-    .fullscreen-mode .album-art { width:400px; height:400px; }
-    .fullscreen-mode .lyrics-line { font-size:36px; }
-    .fullscreen-mode .lyrics-line.active { font-size:40px; }
-
-    @media (max-width:900px) {
-      .image-side { display:none; }
-      .lyrics-side { flex:1; padding:20px; }
+    body { background: #694b40; isolation: isolate; font-family: system-ui, sans-serif; }
+    .dynamic-bg { background: #60453d; }
+    .gradient-overlay { opacity: 1; animation-duration: 60s; }
+    .image-overlay {
+      inset: -9%; width: 118%; height: 118%;
+      opacity: .56; transition: opacity .6s, filter .6s;
     }
+    body::before {
+      content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+      background: linear-gradient(100deg, #28181312, #28191638 60%, #30211d50);
+    }
+    .particles-container { opacity: .20; }
+    .container {
+      height: 100dvh; width: min(100%, 1380px); margin-inline: auto;
+      align-items: center; padding: 72px clamp(26px, 8vw, 110px) 24px;
+      gap: clamp(40px, 8vw, 114px);
+    }
+    .image-side { flex: 0 0 34%; min-width: 0; padding: 0; }
+    .album-art {
+      width: min(100%, 46dvh); height: auto; aspect-ratio: 1;
+      border-radius: clamp(9px, 1.3vw, 20px); margin-bottom: 15px;
+      box-shadow: 0 18px 58px #31191042;
+    }
+    .album-art:hover { transform: none; box-shadow: 0 18px 58px #31191042; }
+    .album-placeholder {
+      background: radial-gradient(ellipse at 32% 36%, #f2cb9f 0, transparent 53%),
+        radial-gradient(ellipse at 71% 66%, #b2757f 0, transparent 59%),
+        linear-gradient(145deg, #b38c5a, #e3b7a2 48%, #65766d);
+      color: #fff2db; font-size: clamp(34px, 7vw, 92px); font-weight: 300;
+    }
+    .song-title, .player-section { width: min(100%, 46dvh); max-width: none; }
+    .song-title { padding: 0; margin-bottom: 10px; text-align: left; font-size: clamp(15px, 1.6vw, 22px); }
+    .player-section { margin-top: 0; }
+    .time-display { margin-bottom: 6px; color: #fff5e6c9; font-variant-numeric: tabular-nums; }
+    .progress-container { margin-bottom: 9px; background: #fff6e650; }
+    .progress-bar { background: #fff5e7; }
+    .control-btn, #playBtn {
+      border: 0; background: transparent; color: #fff8ed;
+      backdrop-filter: none; width: 42px; height: 42px;
+    }
+    #playBtn { font-size: 25px; }
+    .control-btn:hover, #playBtn:hover { background: #fff7e51a; }
+    .settings-btn, .fullscreen-btn {
+      top: 17px; padding: 9px; background: #ffefdb12;
+      border-color: #fff0d830; line-height: 1; border-radius: 11px;
+    }
+    .settings-panel { width: min(375px, calc(100% - 30px)); min-width: 0; max-height: 77dvh; background: #42312cee; }
+    .settings-panel .file-btn { min-width: 0; white-space: normal; overflow-wrap: anywhere; }
+    .lyrics-side { align-self: stretch; flex: 1; min-width: 0; min-height: 0; padding: 0; }
+    .file-inputs {
+      position: absolute; top: -55px; left: 0; right: 0;
+      gap: 7px; margin: 0; flex-wrap: wrap;
+    }
+    .file-input-group { flex: 0 1 auto; }
+    .file-btn {
+      padding: 8px 13px; border-radius: 999px; background: #39251b35;
+      border-color: #fff4e03d; font: inherit; font-size: 13px; white-space: nowrap;
+    }
+    .file-btn:hover { background: #fff5e329; transform: none; }
+    .file-btn:focus-within, button:focus-visible { outline: 2px solid #ffe0ac; outline-offset: 3px; }
+    .file-btn input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+    .lyrics-display-container {
+      flex: 1; min-height: 0; overflow: auto; scrollbar-width: none;
+      overscroll-behavior: contain;
+      mask-image: linear-gradient(transparent, #000 16%, #000 78%, transparent);
+    }
+    .lyrics-wheel {
+      padding: var(--lyric-inset, 26dvh) 8px var(--lyric-tail, 50dvh);
+      display: grid; gap: clamp(11px, 2.2dvh, 25px);
+    }
+    .lyrics-line {
+      width: 100%; padding: .04em 0; border: 0; background: transparent;
+      font-family: var(--lyric-font, system-ui); font-size: clamp(18px, 4.3vw, var(--lyric-size, 36px));
+      text-align: start; font-weight: 650; line-height: 1.29; letter-spacing: -.028em;
+      overflow-wrap: anywhere; color: #fff6eaa6; text-shadow: 0 2px 12px #3c201b40;
+      transition: color .4s ease, filter .4s ease;
+    }
+    button.lyrics-line { cursor: pointer; }
+    button.lyrics-line:hover { color: #fff7eb; }
+    .lyrics-line.prev { color: #fff5e979; }
+    .lyrics-line.far-prev { color: #fff5e94d; }
+    .lyrics-line.active { color: #fff9f0; }
+    .lyrics-line.active + .lyrics-line + .lyrics-line { color: #fff5e979; }
+    .fullscreen-mode { padding-top: 30px; }
+    .fullscreen-mode .file-inputs { display: none; }
+    .fullscreen-mode .fullscreen-btn { z-index: 3; opacity: .55; }
+    @media (max-width: 760px) {
+      .container, .container.fullscreen-mode { flex-direction: column; padding: 62px 18px 10px; gap: 13px; }
+      .image-side {
+        width: 100%; flex: none; display: grid; grid-template-columns: 62px minmax(0, 1fr);
+        grid-template-rows: auto 1fr; align-items: center; column-gap: 12px;
+      }
+      .album-art { width: 62px; margin: 0; grid-row: span 2; }
+      .album-placeholder { font-size: 32px; }
+      .song-title, .player-section { width: 100%; margin: 0; }
+      .player-section { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 4px 10px; }
+      .time-display { margin: 0; font-size: 10px; }
+      .progress-container { margin: 0; grid-row: 2; }
+      .controls { grid-column: 2; grid-row: 1 / span 2; gap: 3px; }
+      .control-btn, #playBtn { width: 32px; height: 32px; font-size: 14px; }
+      .lyrics-side { width: 100%; }
+      .file-inputs { position: static; margin-bottom: 4px; }
+      .file-btn { padding: 6px 9px; }
+      .lyrics-line { font-size: clamp(17px, 7vw, var(--lyric-size, 36px)); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+    .album-art.can-crop { cursor: pointer; }
+    .crop-dialog {
+      margin: auto; width: min(92vw, 390px); max-height: 92dvh; overflow: auto;
+      padding: 18px; border: 1px solid #ffffff40; border-radius: 14px;
+      background: #242129; color: white;
+    }
+    .crop-dialog::backdrop { background: #000a; }
+    .crop-dialog h2 { font-size: 18px; margin-bottom: 12px; }
+    .crop-preview { width: min(100%, 42dvh); aspect-ratio: 1; overflow: hidden; margin: auto; background: #151419; touch-action: none; cursor: grab; }
+    .crop-preview img { display: block; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+    .crop-dialog label { display: grid; grid-template-columns: 1fr minmax(0, 55%); gap: 10px; align-items: center; margin: 10px 0; font-size: 14px; }
+    .crop-dialog input { width: 100%; }
+    .crop-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 6px; }
+    .lyrics-line,
+    .lyrics-line.prev,
+    .lyrics-line.far-prev,
+    .lyrics-line.active + .lyrics-line + .lyrics-line {
+      color: #f4f4f4;
+      opacity: var(--line-opacity, .24);
+      text-shadow: none;
+      transition: color .38s ease, opacity .38s ease;
+    }
+    .lyrics-line.active {
+      color: #fff;
+      opacity: 1;
+      text-shadow: none;
+    }
+    .lyrics-line.prev {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .38s ease-out, visibility 0s linear .38s;
+    }
+    .lyrics-line.far-prev { opacity: 0; visibility: hidden; }
+    @media (prefers-reduced-motion: reduce) {
+      .lyrics-line, .lyrics-line.prev { transition: none; }
+    }
+    .lyrics-line.active .lyric-word { color: #ffffffc9; transition: color .18s ease; }
+    .lyrics-line.active .lyric-word.lit { color: #fff; }
+    .clip-inputs { display: grid; gap: 8px; }
+    .clip-inputs label { display: grid; grid-template-columns: 1fr 52%; gap: 8px; align-items: center; font-size: 13px; }
+    .clip-actions { display: flex; gap: 8px; margin-top: 8px; }
+    .clip-countdown { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; pointer-events: none; font-size: clamp(64px, 16vw, 200px); font-weight: 700; text-shadow: 0 4px 28px #000; }
+    .image-overlay.custom-background { opacity: .9; }
+    .clip-countdown[hidden] { display: none; }
   </style>
 </head>
 <body>
@@ -172,15 +263,28 @@
   <div class="particles-container" id="particlesContainer"></div>
 
   <div class="container" id="mainContainer">
-    <button class="fullscreen-btn" id="fullscreenBtn">⛶</button>
-    <button class="settings-btn" id="settingsBtn">⚙️</button>
+    <button class="fullscreen-btn" id="fullscreenBtn" aria-label="Tam ekran">⛶</button>
+    <button class="settings-btn" id="settingsBtn" aria-label="Tənzimləmələr">⚙️</button>
 
     <div class="settings-panel" id="settingsPanel">
       <div class="settings-title">Tənzimləmələr</div>
+      <div class="settings-group">
+        <div class="settings-label">Çəkiliş üçün hissə</div>
+        <div class="clip-inputs">
+          <label>Başlanğıc <input class="settings-input" id="clipStart" value="0:00" placeholder="0:00"></label>
+          <label>Bitiş <input class="settings-input" id="clipEnd" placeholder="0:30"></label>
+        </div>
+        <div class="clip-actions">
+          <button class="file-btn" id="clipPlay">3 saniyəyə başlat</button>
+          <button class="file-btn" id="clipStop">Dayandır</button>
+        </div>
+        <p class="settings-label" id="clipStatus" aria-live="polite"></p>
+      </div>
 
       <div class="settings-group"><label class="settings-label">Mahnı Adı</label><input type="text" class="settings-input" id="songTitleInput" placeholder="Mahnı adını daxil edin" maxlength="50"></div>
 
       <div class="settings-group"><label class="settings-label">Şrift Növü</label><select class="settings-select" id="fontSelect">
+        <option value="system-ui, sans-serif" selected>Sistem şrifti</option>
         <option value="'Helvetica Neue', sans-serif">Helvetica Neue</option>
         <option value="'Georgia', serif">Georgia</option>
         <option value="'Arial', sans-serif">Arial</option>
@@ -189,21 +293,25 @@
         <option value="'Verdana', sans-serif">Verdana</option>
         <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
         <option value="'Gill Sans', sans-serif">Gill Sans</option>
-        <option value="'Palatino', serif" selected>Palatino</option>
+        <option value="'Palatino', serif">Palatino</option>
         <option value="'Comic Sans MS', cursive">Comic Sans MS</option>
         <option value="'Impact', sans-serif">Impact</option>
         <option value="'Lucida Sans', sans-serif">Lucida Sans</option>
       </select></div>
 
-      <div class="settings-group"><label class="settings-label">Sözlərin Şrift Ölçüsü</label><select class="settings-select" id="sizeSelect"><option value="20">Çox Kiçik</option><option value="24">Kiçik</option><option value="28" selected>Normal</option><option value="32">Böyük</option><option value="36">Daha Böyük</option><option value="40">Çox Böyük</option><option value="44">Nəhəng</option></select></div>
+      <div class="settings-group"><label class="settings-label">Sözlərin Şrift Ölçüsü</label><select class="settings-select" id="sizeSelect"><option value="20">Çox Kiçik</option><option value="24">Kiçik</option><option value="28">Normal</option><option value="32">Böyük</option><option value="36" selected>Daha Böyük</option><option value="40">Çox Böyük</option><option value="44">Nəhəng</option></select></div>
 
-      <div class="settings-group"><label class="settings-label">Arxa Fon Rəngləri</label><div class="custom-colors"><input type="color" class="color-input" id="color1" value="#000000"><input type="color" class="color-input" id="color2" value="#000000"><input type="color" class="color-input" id="color3" value="#000000"></div><button class="file-btn" id="applyColors" style="margin-top:10px;padding:10px;">Rəngləri Tətbiq Et</button></div>
+      <div class="settings-group"><label class="settings-label">Arxa Fon Rəngləri</label><div class="custom-colors"><input type="color" class="color-input" id="color1" value="#8b6549"><input type="color" class="color-input" id="color2" value="#925e60"><input type="color" class="color-input" id="color3" value="#67746c"></div><button class="file-btn" id="applyColors" style="margin-top:10px;padding:10px;">Rəngləri Tətbiq Et</button></div>
 
       <div class="settings-group"><label class="settings-label">Partikullar — Forma</label><select class="settings-select" id="particleShape"><option value="circle">Dairə</option><option value="square">Kvadrat</option><option value="triangle">Üçbucaq</option><option value="star">Ulduz</option><option value="line">Xətt</option></select></div>
       <div class="settings-group"><label class="settings-label">Partikullar — Say</label><input type="range" id="particleCount" class="settings-range" min="5" max="150" value="40"></div>
-      <div class="settings-group"><label class="settings-label">Partikullar — Ölçü (orta)</label><input type="range" id="particleSize" class="settings-range" min="2" max="40" value="12"></div>
+      <div class="settings-group"><label class="settings-label">Partikullar — Ölçü</label><input type="range" id="particleSize" class="settings-range" min="2" max="120" value="12"></div>
 
-      <div class="settings-group"><label class="settings-label">Arxa Şəklin Blur (px)</label><input type="range" id="bgBlur" class="settings-range" min="0" max="80" value="30"></div>
+      <div class="settings-group">
+        <button class="file-btn" type="button" id="clearBackground" style="margin-top:8px" disabled>Avtomatik fona qayıt</button>
+      </div>
+
+      <div class="settings-group"><label class="settings-label" for="bgBlur">Fon şəklinin bulanıqlığı</label><input type="range" id="bgBlur" class="settings-range" min="0" max="80" value="65"></div>
 
       <div class="settings-group"><label class="settings-label">Sinxronizasiya Rejimi</label>
         <div style="display:flex;gap:8px;margin-top:6px;">
@@ -217,30 +325,45 @@
     </div>
 
     <div class="image-side">
-      <div class="album-art"><img id="albumImage" src="" alt="" style="display:none;"><div class="album-placeholder" id="albumPlaceholder">🖼️ Albom Şəkli</div></div>
+      <div class="album-art"><img id="albumImage" src="" alt="" style="display:none;"><div class="album-placeholder" id="albumPlaceholder">♫</div></div>
       <div class="song-title" id="songTitleDisplay">Mahnı Adı</div>
       <div class="player-section">
         <div class="time-display"><span id="currentTime">0:00</span><span id="duration">0:00</span></div>
         <div class="progress-container" id="progressContainer"><div class="progress-bar" id="progressBar"></div></div>
-        <div class="controls"><button class="control-btn" id="prevBtn">⏮</button><button class="control-btn" id="playBtn">▶</button><button class="control-btn" id="nextBtn">⏭</button></div>
+        <div class="controls"><button class="control-btn" id="prevBtn" aria-label="Əvvəlki sətir">⏮</button><button class="control-btn" id="playBtn" aria-label="Oynat">▶</button><button class="control-btn" id="nextBtn" aria-label="Növbəti sətir">⏭</button></div>
       </div>
     </div>
 
     <div class="lyrics-side">
       <div class="file-inputs">
-        <div class="file-input-group"><div class="file-input-label">Audio Faylı</div><label class="file-btn">🎵 Audio Yüklə<input type="file" id="audioFile" accept="audio/*" style="display:none"></label></div>
-        <div class="file-input-group"><div class="file-input-label">Albom Şəkli</div><label class="file-btn">🖼️ Şəkil Yüklə<input type="file" id="imageFile" accept="image/*" style="display:none"></label></div>
-        <div class="file-input-group"><div class="file-input-label">Sözlər</div><label class="file-btn">📝 Sözləri Yüklə<input type="file" id="lyricsFile" accept=".txt,.lrc" style="display:none"></label></div>
+        <div class="file-input-group"><label class="file-btn">Audio yüklə<input type="file" id="audioFile" accept="audio/*"></label></div>
+        <div class="file-input-group"><label class="file-btn">Üz qabığı yüklə<input type="file" id="imageFile" accept="image/*"></label></div>
+        <div class="file-input-group"><label class="file-btn">Sözləri yüklə<input type="file" id="lyricsFile" accept=".txt,.lrc"></label></div>
+        <div class="file-input-group"><label class="file-btn">Fon yüklə<input type="file" id="backgroundFile" accept="image/*"></label></div>
       </div>
 
       <div class="lyrics-display-container" id="lyricsDisplay">
         <div class="lyrics-wheel" id="lyricsWheel">
-          <div class="lyrics-line active">Sözləri əlavə edin</div>
+          <div class="lyrics-line active">Mahnı sözlərini yükləyin</div>
         </div>
       </div>
     </div>
   </div>
 
+  <dialog class="crop-dialog" id="cropDialog" aria-labelledby="cropTitle">
+    <h2 id="cropTitle">Şəkli kəs</h2>
+    <div class="crop-preview" id="cropPreview"><img id="cropImage" alt="Kadrın önizləməsi" draggable="false"></div>
+    <label>Yaxınlaşdırma <input id="cropZoom" type="range" min="100" max="400" value="100"></label>
+    <label>Üfüqi mövqe <input id="cropX" type="range" min="0" max="100" value="50"></label>
+    <label>Şaquli mövqe <input id="cropY" type="range" min="0" max="100" value="50"></label>
+    <form method="dialog" class="crop-actions">
+      <button type="button" class="file-btn" id="cropReset">Sıfırla</button>
+      <button class="file-btn" value="cancel">Ləğv et</button>
+      <button class="file-btn" value="apply">Tətbiq et</button>
+    </form>
+  </dialog>
+
+  <output class="clip-countdown" id="clipCountdown" hidden></output>
   <audio id="audioPlayer" style="display:none"></audio>
 
   <script>
@@ -254,6 +377,7 @@
     const albumPlaceholder = document.getElementById('albumPlaceholder');
     const songTitleDisplay = document.getElementById('songTitleDisplay');
     const songTitleInput = document.getElementById('songTitleInput');
+    const lyricsDisplay = document.getElementById('lyricsDisplay');
     const lyricsWheel = document.getElementById('lyricsWheel');
     const audioPlayer = document.getElementById('audioPlayer');
     const audioFile = document.getElementById('audioFile');
@@ -279,6 +403,10 @@
     const particleCount = document.getElementById('particleCount');
     const particleSize = document.getElementById('particleSize');
     const bgBlur = document.getElementById('bgBlur');
+    const backgroundFile = document.getElementById('backgroundFile');
+    const clearBackground = document.getElementById('clearBackground');
+    let customBackgroundUrl = '';
+
     const startSyncBtn = document.getElementById('startSync');
     const stopSyncBtn = document.getElementById('stopSync');
     const exportLrcBtn = document.getElementById('exportLrc');
@@ -312,7 +440,7 @@
         
         if (shape === 'line') {
           particle.style.width = `${size * 3}px`;
-          particle.style.height = '2px';
+          particle.style.height = `${Math.max(2, Math.round(size / 10))}px`;
         } else {
           particle.style.width = `${size}px`;
           particle.style.height = `${size}px`;
@@ -340,8 +468,38 @@
 
     // Arxa plan rənglərini yenilə
     function updateBackgroundColors(c1, c2, c3) {
-      gradientOverlay.style.background = `linear-gradient(45deg, ${c1}, ${c2}, ${c3}, ${c1}99, ${c2}99)`;
-      gradientOverlay.style.backgroundSize = '400% 400%';
+      gradientOverlay.style.background = `radial-gradient(ellipse at 37% 39%, ${c1}, transparent 49%), radial-gradient(ellipse at 65% 35%, ${c2}, transparent 56%), linear-gradient(135deg, ${c1}, ${c2} 45%, ${c3} 72%)`;
+      gradientOverlay.style.backgroundSize = '120% 120%';
+    }
+
+    function useCoverColors() {
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = 36;
+      const context = canvas.getContext('2d', { willReadFrequently: true });
+      if (!context) return;
+      context.drawImage(albumImage, 0, 0, 36, 36);
+      const pixels = context.getImageData(0, 0, 36, 36).data;
+      const bins = new Map();
+      for (let i = 0; i < pixels.length; i += 4) {
+        const [r, g, b, alpha] = pixels.subarray(i, i + 4);
+        if (alpha < 180) continue;
+        const key = [r, g, b].map(value => value >> 6).join(',');
+        const bin = bins.get(key) || { rgb: [0, 0, 0], count: 0 };
+        bin.count++;
+        [r, g, b].forEach((value, channel) => bin.rgb[channel] += value);
+        bins.set(key, bin);
+      }
+      const colors = [...bins.values()].sort((a, b) => b.count - a.count).slice(0, 3);
+      if (!colors.length) return;
+      [color1, color2, color3].forEach((input, index) => {
+        const color = colors[index % colors.length];
+        const strength = [.68, .55, .42][index];
+        input.value = '#' + color.rgb.map(value =>
+          Math.round(12 + strength * value / color.count).toString(16).padStart(2, '0')
+        ).join('');
+      });
+      updateBackgroundColors(color1.value, color2.value, color3.value);
+      createParticles();
     }
 
     // Zamanı formatla
@@ -353,65 +511,45 @@
     }
 
     // Sözləri parse et - YENİLƏNİB
-    function parseLyrics(text) {
-      console.log("Söz faylı içeriği:", text);
-      
-      const lines = text.split('\n');
-      const parsed = [];
-      let hasTimestamps = false;
-      
-      for (const line of lines) {
-        const trimmedLine = line.trim();
-        if (trimmedLine === '') continue;
+    function timestamp(match) {
+      return Number(match[1]) * 60 + Number(match[2]) + Number('0.' + (match[3] || '0'));
+    }
 
-        // LRC formatı üçün zaman etiketlərini tap
-        const timeMatches = trimmedLine.matchAll(/\[(\d+):(\d+)(?:\.(\d+))?\]/g);
-        let lastTime = 0;
-        let textPart = trimmedLine;
-        
-        for (const timeMatch of timeMatches) {
-          hasTimestamps = true;
-          const minutes = parseInt(timeMatch[1]);
-          const seconds = parseInt(timeMatch[2]);
-          const msStr = timeMatch[3] ? timeMatch[3] : null;
-          let frac = 0;
-          
-          if (msStr) { 
-            // Milisaniyələri düzgün hesabla
-            if (msStr.length === 3) {
-              frac = parseInt(msStr)/1000; // 3 rəqəmli milisaniyə
-            } else if (msStr.length === 2) {
-              frac = parseInt(msStr)/100;  // 2 rəqəmli yüzdə bir saniyə
-            } else if (msStr.length === 1) {
-              frac = parseInt(msStr)/10;   // 1 rəqəmli onda bir saniyə
-            }
-          }
-          
-          lastTime = minutes * 60 + seconds + frac;
-          textPart = textPart.replace(timeMatch[0], '').trim();
-        }
-        
-        if (textPart !== '') {
-          parsed.push({ time: lastTime, text: textPart });
+    function parseLyrics(text) {
+      const parsed = [];
+      for (const line of text.split(/\r?\n/)) {
+        const tags = [...line.matchAll(/\[(\d+):(\d+)(?:\.(\d+))?\]/g)];
+        const content = line.replace(/\[(\d+):(\d+)(?:\.(\d+))?\]/g, '').trim();
+        if (!content || /^\[[a-z]+:.*\]$/i.test(content)) continue;
+        const wordTags = [...content.matchAll(/<(\d+):(\d+)(?:\.(\d+))?>/g)];
+        const plain = content.replace(/<(\d+):(\d+)(?:\.(\d+))?>/g, '').trim();
+        if (!plain) continue;
+        const words = wordTags.map((tag, index) => ({
+          text: content.slice(tag.index + tag[0].length, wordTags[index + 1]?.index),
+          time: timestamp(tag)
+        })).filter(word => word.text);
+        const prefix = wordTags.length ? content.slice(0, wordTags[0].index) : '';
+        const base = tags.length ? timestamp(tags[0]) : words[0]?.time;
+        for (const time of tags.length ? tags.map(timestamp) : [base ?? null]) {
+          parsed.push({
+            time, text: plain, prefix,
+            words: words.map(word => ({ ...word, time: word.time + time - base }))
+          });
         }
       }
-      
-      // Zaman etiketləri yoxdursa, avtomatik təyin et
-      if (!hasTimestamps && parsed.length > 0) { 
-        const defaultDuration = 180; 
-        const interval = defaultDuration/parsed.length; 
-        parsed.forEach((line,i) => line.time = i*interval); 
+      if (parsed.every(line => line.time === null)) {
+        const duration = Number.isFinite(audioPlayer.duration) ? audioPlayer.duration : 180;
+        parsed.forEach((line, index) => { line.time = index * duration / parsed.length; line.estimated = true; });
       }
-      
-      // Zaman etiketlərinə görə sırala
-      parsed.sort((a,b) => { 
-        if (a.time === null) return 1; 
-        if (b.time === null) return -1; 
-        return a.time - b.time; 
+      return parsed.sort((a, b) => (a.time ?? Infinity) - (b.time ?? Infinity));
+    }
+
+    function updateWordHighlight() {
+      const line = lyricsWheel.children[currentLineIndex];
+      if (!line) return;
+      line.querySelectorAll('.lyric-word').forEach(word => {
+        word.classList.toggle('lit', audioPlayer.currentTime >= Number(word.dataset.time));
       });
-      
-      console.log("Parse edilmiş sözlər:", parsed);
-      return parsed;
     }
 
     // Söz faylını yüklə
@@ -438,16 +576,28 @@
       if (lyricsData.length === 0) {
         const line = document.createElement('div'); 
         line.className = 'lyrics-line active'; 
-        line.textContent = 'Sözləri əlavə edin'; 
+        line.textContent = 'Mahnı sözlərini yükləyin'; 
         lyricsWheel.appendChild(line); 
         return;
       }
       
       lyricsData.forEach((lineData, index) => {
-        const line = document.createElement('div'); 
+        const line = document.createElement('button');
+        line.type = 'button';
         line.className = 'lyrics-line'; 
         line.dataset.index = index;
-        line.textContent = lineData.text;
+        if (lineData.words?.length) {
+          line.append(lineData.prefix);
+          for (const word of lineData.words) {
+            const span = document.createElement('span');
+            span.className = 'lyric-word';
+            span.dataset.time = word.time;
+            span.textContent = word.text;
+            line.appendChild(span);
+          }
+        } else {
+          line.textContent = lineData.text;
+        }
 
         line.addEventListener('click', () => { 
           if (audioPlayer.src && lineData.time !== null) { 
@@ -462,8 +612,6 @@
           } 
         });
 
-        line.style.fontFamily = fontSelect.value;
-        line.style.fontSize = `${sizeSelect.value}px`;
         lyricsWheel.appendChild(line);
       });
       
@@ -472,44 +620,37 @@
 
     // Görünüşü yenilə
     function updateDisplay() {
-      const lines = document.querySelectorAll('.lyrics-line');
-      
-      if (lines.length === 0) return;
-      
+      const lines = [...lyricsWheel.children];
+      const activeLine = lines[Math.max(0, currentLineIndex)] || lines[0];
+      if (!activeLine) return;
+
       lines.forEach((line, index) => {
-        line.classList.remove('active', 'prev', 'next', 'far-prev', 'far-next');
-        
-        const diff = index - currentLineIndex;
-        
-        if (diff === 0) {
-          line.classList.add('active');
-        } else if (diff === -1) {
-          line.classList.add('prev');
-        } else if (diff === 1) {
-          line.classList.add('next');
-        } else if (diff === -2) {
-          line.classList.add('far-prev');
-        } else if (diff === 2) {
-          line.classList.add('far-next');
-        }
+        const distance = Math.abs(index - currentLineIndex);
+        const opacity = [1, .32, .21, .15][distance] ?? .10;
+        line.style.setProperty('--line-opacity', opacity);
+        line.classList.toggle('active', line === activeLine);
+        line.classList.toggle('prev', index === currentLineIndex - 1);
+        line.classList.toggle('far-prev', index < currentLineIndex - 1);
+        if (line === activeLine) line.setAttribute('aria-current', 'true');
+        else line.removeAttribute('aria-current');
+      });
+
+      updateWordHighlight();
+      const inset = Math.round(lyricsDisplay.clientHeight * .39);
+      lyricsWheel.style.setProperty('--lyric-inset', `${inset}px`);
+      lyricsWheel.style.setProperty('--lyric-tail', `${lyricsDisplay.clientHeight - inset}px`);
+      const top = activeLine.getBoundingClientRect().top - lyricsDisplay.getBoundingClientRect().top;
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      lyricsDisplay.scrollTo({
+        top: lyricsDisplay.scrollTop + top - inset,
+        behavior: reducedMotion ? 'auto' : 'smooth'
       });
     }
 
-    // Şrift ayarlarını yenilə
     function updateFontSettings() {
-      const fontFamily = fontSelect.value; 
-      const fontSize = sizeSelect.value;
-      
-      const lines = document.querySelectorAll('.lyrics-line');
-      lines.forEach(line => { 
-        line.style.fontFamily = fontFamily; 
-        line.style.fontSize = `${fontSize}px`; 
-      });
-      
-      const activeLines = document.querySelectorAll('.lyrics-line.active');
-      activeLines.forEach(line => { 
-        line.style.fontSize = `${parseInt(fontSize) + 4}px`; 
-      });
+      lyricsWheel.style.setProperty('--lyric-font', fontSelect.value);
+      lyricsWheel.style.setProperty('--lyric-size', `${sizeSelect.value}px`);
+      updateDisplay();
     }
 
     // Ayarlar panelini aç/bağla
@@ -518,16 +659,20 @@
     }
     
     // Tam ekran rejimi
-    fullscreenBtn.addEventListener('click', () => {
-      if (!document.fullscreenElement) { 
-        document.documentElement.requestFullscreen().catch(err => console.log(`Fullscreen error: ${err.message}`)); 
-        mainContainer.classList.add('fullscreen-mode'); 
-      } else { 
-        document.exitFullscreen(); 
-        mainContainer.classList.remove('fullscreen-mode'); 
+    fullscreenBtn.addEventListener('click', async () => {
+      try {
+        if (document.fullscreenElement) await document.exitFullscreen();
+        else await document.documentElement.requestFullscreen();
+      } catch (error) {
+        console.error(error);
       }
     });
-    
+
+    document.addEventListener('fullscreenchange', () => {
+      mainContainer.classList.toggle('fullscreen-mode', Boolean(document.fullscreenElement));
+      updateDisplay();
+    });
+
     // Audio faylı yüklə
     audioFile.addEventListener('change', (e) => { 
       const file = e.target.files[0]; 
@@ -542,7 +687,7 @@
         audioPlayer.addEventListener('loadedmetadata', () => { 
           durationDisplay.textContent = formatTime(audioPlayer.duration); 
           // Zaman etiketləri yoxdursa, avtomatik təyin et
-          if (lyricsData.length > 0 && lyricsData[0].time === null) { 
+          if (lyricsData.length > 0 && lyricsData[0].estimated) { 
             const duration = audioPlayer.duration; 
             const interval = duration/lyricsData.length; 
             lyricsData.forEach((line,i) => line.time = i*interval); 
@@ -552,15 +697,109 @@
       } 
     });
 
+    const cropDialog = document.getElementById('cropDialog');
+    const cropPreview = document.getElementById('cropPreview');
+    const cropImage = document.getElementById('cropImage');
+    const cropControls = ['cropZoom', 'cropX', 'cropY'].map(id => document.getElementById(id));
+    const cover = albumImage.parentElement;
+    let savedCrop = ['100', '50', '50'];
+    let cropDrag = null;
+
+    function renderCrop(image) {
+      const [zoom, x, y] = cropControls.map(control => control.value);
+      const position = `${x}% ${y}%`;
+      image.style.objectPosition = position;
+      image.style.transformOrigin = position;
+      image.style.transform = `scale(${zoom / 100})`;
+    }
+
+    function openCrop() {
+      if (!cover.classList.contains('can-crop')) return;
+      cropImage.src = albumImage.src;
+      cropControls.forEach((control, index) => { control.value = savedCrop[index]; });
+      renderCrop(cropImage);
+      cropDialog.returnValue = '';
+      cropDialog.showModal();
+    }
+
+    cover.addEventListener('click', openCrop);
+    cover.addEventListener('keydown', event => {
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      openCrop();
+    });
+    cropDialog.addEventListener('input', () => renderCrop(cropImage));
+    document.getElementById('cropReset').addEventListener('click', () => {
+      cropControls.forEach(control => { control.value = control.defaultValue; });
+      renderCrop(cropImage);
+    });
+    cropDialog.addEventListener('close', () => {
+      if (cropDialog.returnValue !== 'apply') return;
+      savedCrop = cropControls.map(control => control.value);
+      renderCrop(albumImage);
+    });
+
+    cropPreview.addEventListener('pointerdown', event => {
+      const [, x, y] = cropControls.map(control => Number(control.value));
+      cropDrag = { pointerId: event.pointerId, startX: event.clientX, startY: event.clientY, x, y };
+      cropPreview.setPointerCapture(event.pointerId);
+    });
+    cropPreview.addEventListener('pointermove', event => {
+      if (cropDrag?.pointerId !== event.pointerId || !cropImage.naturalWidth) return;
+      const side = cropPreview.clientWidth;
+      const scale = side / Math.min(cropImage.naturalWidth, cropImage.naturalHeight) * cropControls[0].value / 100;
+      const excessX = cropImage.naturalWidth * scale - side;
+      const excessY = cropImage.naturalHeight * scale - side;
+      if (excessX > 0) cropControls[1].value = cropDrag.x - (event.clientX - cropDrag.startX) * 100 / excessX;
+      if (excessY > 0) cropControls[2].value = cropDrag.y - (event.clientY - cropDrag.startY) * 100 / excessY;
+      renderCrop(cropImage);
+    });
+    cropPreview.addEventListener('lostpointercapture', () => { cropDrag = null; });
+
+    function updateBackgroundImage() {
+      const src = customBackgroundUrl || albumImage.getAttribute('src');
+      imageOverlay.style.backgroundImage = src ? `url(${src})` : '';
+      imageOverlay.classList.toggle('custom-background', Boolean(customBackgroundUrl));
+      clearBackground.disabled = !customBackgroundUrl;
+    }
+
+    backgroundFile.addEventListener('change', () => {
+      const file = backgroundFile.files[0];
+      if (!file) return;
+      const previousUrl = customBackgroundUrl;
+      customBackgroundUrl = URL.createObjectURL(file);
+      updateBackgroundImage();
+      if (previousUrl) URL.revokeObjectURL(previousUrl);
+    });
+
+    clearBackground.addEventListener('click', () => {
+      const previousUrl = customBackgroundUrl;
+      customBackgroundUrl = '';
+      backgroundFile.value = '';
+      updateBackgroundImage();
+      URL.revokeObjectURL(previousUrl);
+    });
+
     // Şəkil faylı yüklə
     imageFile.addEventListener('change', (e) => { 
       const file = e.target.files[0]; 
       if (file) { 
         const url = URL.createObjectURL(file); 
+        savedCrop = ['100', '50', '50'];
+        albumImage.style.removeProperty('object-position');
+        albumImage.style.removeProperty('transform-origin');
+        albumImage.style.removeProperty('transform');
+        cover.classList.add('can-crop');
+        cover.tabIndex = 0;
+        cover.setAttribute('role', 'button');
+        cover.setAttribute('aria-label', 'Şəkli kəs');
         albumImage.src = url; 
         albumImage.style.display = 'block'; 
         albumPlaceholder.style.display = 'none'; 
-        imageOverlay.style.backgroundImage = `url(${url})`; 
+        updateBackgroundImage();
+        albumImage.addEventListener('load', () => {
+          if (albumImage.src === url) useCoverColors();
+        }, { once: true }); 
       } 
     });
 
@@ -575,6 +814,7 @@
 
     // Play/Pause düyməsi
     function updatePlayButton() { 
+      playBtn.setAttribute('aria-label', isPlaying ? 'Fasilə ver' : 'Oynat');
       playBtn.textContent = isPlaying ? '⏸' : '▶'; 
     }
     
@@ -647,6 +887,82 @@
       } 
     });
 
+    const clipCountdown = document.getElementById('clipCountdown');
+    const clipStatus = document.getElementById('clipStatus');
+    let clipTimer = 0;
+    let clipFrame = 0;
+    let clipVersion = 0;
+
+    function cancelClip() {
+      clipVersion++;
+      clearTimeout(clipTimer);
+      cancelAnimationFrame(clipFrame);
+      clipCountdown.hidden = true;
+    }
+
+    function readClipTime(id) {
+      const value = document.getElementById(id).value.trim().replace(',', '.');
+      if (/^\d+(?:\.\d+)?$/.test(value)) return Number(value);
+      const match = /^(\d+):([0-5]?\d)(?:\.(\d+))?$/.exec(value);
+      return match ? timestamp(match) : NaN;
+    }
+
+    document.getElementById('clipPlay').addEventListener('click', () => {
+      const start = readClipTime('clipStart');
+      const end = readClipTime('clipEnd');
+      if (!Number.isFinite(audioPlayer.duration)) {
+        clipStatus.textContent = 'Əvvəlcə audio faylı yüklə.';
+        return;
+      }
+      if (!(start >= 0 && end > start && end <= audioPlayer.duration)) {
+        clipStatus.textContent = 'Audio müddətinə uyğun başlanğıc və bitiş yaz (məsələn, 0:12 və 0:32).';
+        return;
+      }
+      cancelClip();
+      audioPlayer.pause();
+      audioPlayer.currentTime = start;
+      settingsPanel.classList.remove('active');
+      clipStatus.textContent = '';
+      const version = clipVersion;
+      let seconds = 3;
+      const tick = async () => {
+        if (seconds > 0) {
+          clipCountdown.textContent = seconds--;
+          clipCountdown.hidden = false;
+          clipTimer = setTimeout(tick, 1000);
+          return;
+        }
+        clipCountdown.hidden = true;
+        try {
+          await audioPlayer.play();
+        } catch {
+          clipStatus.textContent = 'Audio başlatmaq mümkün olmadı.';
+          settingsPanel.classList.add('active');
+          return;
+        }
+        if (version !== clipVersion) return;
+        const checkEnd = () => {
+          if (audioPlayer.currentTime >= end) {
+            audioPlayer.pause();
+            audioPlayer.currentTime = end;
+            cancelClip();
+          } else if (!audioPlayer.paused) {
+            clipFrame = requestAnimationFrame(checkEnd);
+          }
+        };
+        checkEnd();
+      };
+      tick();
+    });
+
+    document.getElementById('clipStop').addEventListener('click', () => {
+      cancelClip();
+      audioPlayer.pause();
+    });
+    audioFile.addEventListener('change', cancelClip);
+    audioPlayer.addEventListener('play', () => { isPlaying = true; updatePlayButton(); });
+    audioPlayer.addEventListener('pause', () => { isPlaying = false; updatePlayButton(); });
+
     // Audio zaman yeniləməsi - YENİLƏNİB
     audioPlayer.addEventListener('timeupdate', () => {
       const currentTime = audioPlayer.currentTime;
@@ -662,11 +978,11 @@
 
       if (lyricsData.length === 0) return;
 
-      let newIndex = currentLineIndex;
+      let newIndex = 0;
       
       // Cari zaman üçün uyğun sətiri tap - daha dəqiq alqoritm
       for (let i = 0; i < lyricsData.length; i++) {
-        if (lyricsData[i].time !== null && lyricsData[i].time <= currentTime + 0.3) {
+        if (lyricsData[i].time !== null && lyricsData[i].time <= currentTime) {
           newIndex = i;
         } else {
           break;
@@ -677,10 +993,12 @@
         currentLineIndex = newIndex; 
         updateDisplay(); 
       }
+      updateWordHighlight();
     });
 
     // Klaviatura idarəsi
     document.addEventListener('keydown', (e) => {
+      if (e.defaultPrevented || e.target.closest('dialog, button, input, select, textarea, [contenteditable]')) return;
       if (e.code === 'Space') {
         e.preventDefault();
         if (syncActive) {
@@ -785,7 +1103,7 @@
 
     bgBlur.addEventListener('input', () => { 
       const val = parseInt(bgBlur.value,10); 
-      imageOverlay.style.filter = `blur(${val}px) brightness(0.45) saturate(1.4)`; 
+      imageOverlay.style.filter = `blur(${val}px) brightness(0.82) saturate(0.88)`; 
     });
 
     fontSelect.addEventListener('change', updateFontSettings);
@@ -793,11 +1111,11 @@
 
     // Tətilmə
     function initializeApp() { 
-      updateBackgroundColors('#000000','#000000','#000000'); 
+      updateBackgroundColors(color1.value, color2.value, color3.value); 
       displayLyrics(); 
       updateFontSettings(); 
       createParticles(); 
-      imageOverlay.style.filter = `blur(${parseInt(bgBlur.value,10)}px) brightness(0.45) saturate(1.4)`; 
+      imageOverlay.style.filter = `blur(${parseInt(bgBlur.value,10)}px) brightness(0.82) saturate(0.88)`; 
     }
     
     initializeApp();
